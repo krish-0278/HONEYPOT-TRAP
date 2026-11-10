@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/var/www/html/config.php | Leaked Environment Credentials</title>
+  <meta name="description" content="Production config file containing honeytokens. Deception Honeypot Environment.">
+  <link rel="stylesheet" href="css/cyber-core.css">
+  <style>
+    body {
+      background: #020617;
+      color: #22c55e;
+      font-family: var(--font-mono);
+      padding: 30px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .file-card {
+      width: min(800px, 100%);
+      background: #000;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="cyber-grid-overlay"></div>
+  <div
+    style="width: min(800px, 100%); display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span class="pulse-dot"></span>
+      <span style="font-size: 0.8rem; color: var(--cyan-primary);">LEAKED CONFIGURATION HONEYTOKEN DECOY</span>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <a href="server-files.html" class="btn btn-secondary btn-sm">Terminal Shell</a>
+      <a href="admin.html" class="btn btn-primary btn-sm">SOC Console</a>
+    </div>
+  </div>
+
+  <div class="file-card">
+    <div
+      style="display: flex; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid #1e293b; padding-bottom: 12px;">
+      <span style="color: #f87171; font-weight: 700;">/var/www/html/config.php</span>
+      <span style="color: #64748b; font-size: 0.75rem;">SHA256: 8f4b238ac91...</span>
+    </div>
+    <pre style="font-size: 0.85rem; line-height: 1.7; color: #94a3b8;"><span style="color: #38bdf8;">&lt;?php</span>
+<span style="color: #64748b;">// WARNING: DO NOT COMMIT PRODUCTION SECRETS TO PUBLIC REPOSITORIES</span>
+<span style="color: #f43f5e;">define</span>(<span style="color: #34d399;">'DB_HOST'</span>, <span style="color: #fbbf24;">'localhost:3306'</span>);
+<span style="color: #f43f5e;">define</span>(<span style="color: #34d399;">'DB_USER'</span>, <span style="color: #fbbf24;">'root'</span>);
+<span style="color: #f43f5e;">define</span>(<span style="color: #34d399;">'DB_PASS'</span>, <span style="color: #fbbf24;">'root'</span>);
+<span style="color: #f43f5e;">define</span>(<span style="color: #34d399;">'DB_NAME'</span>, <span style="color: #fbbf24;">'honeypot'</span>);
+
+<span style="color: #64748b;">// AWS & Stripe Honeytokens</span>
+<span style="color: #f43f5e;">define</span>(<span style="color: #34d399;">'AWS_ACCESS_KEY_ID'</span>, <span style="color: #fbbf24;">'AKIAIOSFODNN7EXAMPLE'</span>);
+<span style="color: #f43f5e;">define</span>(<span style="color: #34d399;">'AWS_SECRET_ACCESS_KEY'</span>, <span style="color: #fbbf24;">'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'</span>);
+<span style="color: #f43f5e;">define</span>(<span style="color: #34d399;">'STRIPE_WEBHOOK_SECRET'</span>, <span style="color: #fbbf24;">'whsec_9941a877d9c6e0018a14b5'</span>);
+<span style="color: #38bdf8;">?&gt;</span></pre>
+  </div>
+</body>
+
+</html>

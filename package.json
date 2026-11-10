@@ -1,0 +1,21 @@
+{
+  "name": "honeypot-security-system",
+  "version": "2.4.0",
+  "description": "Enterprise-grade 3D Honeypot Deception & Threat Intelligence Security Platform",
+  "main": "honeypot-security-system-master/server.js",
+  "scripts": {
+    "start": "node honeypot-security-system-master/server.js",
+    "dev": "node honeypot-security-system-master/server.js"
+  },
+  "keywords": [
+    "honeypot",
+    "cybersecurity",
+    "threejs",
+    "threat-intelligence",
+    "soc-dashboard",
+    "deception-technology"
+  ],
+  "author": "Honeypot Security Systems",
+  "license": "ISC"
+}
+

@@ -1,0 +1,9 @@
+==================================================
+🛡️  HONEYPOT CYBERSECURITY PLATFORM v2.4 STARTED
+==================================================
+🌐 3D Landing Page:    http://localhost:3000/
+📊 SOC Dashboard:      http://localhost:3000/admin.html
+🍯 Deception Portal:   http://localhost:3000/login.html
+⚡ API Endpoints:      http://localhost:3000/api/overview
+==================================================
+ℹ️  MySQL not connected, running in high-performance local JSON mode: EACCES

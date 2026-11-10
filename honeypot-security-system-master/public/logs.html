@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/var/log/access.log | Server Access Telemetry Stream</title>
+  <meta name="description" content="Server Access Log Tripwire. Deception Honeypot Environment.">
+  <link rel="stylesheet" href="css/cyber-core.css">
+  <style>
+    body {
+      background: #020617;
+      color: #22c55e;
+      font-family: var(--font-mono);
+      padding: 30px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .log-stream-card {
+      width: min(850px, 100%);
+      background: #000;
+      border: 1px solid #1e293b;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      font-size: 0.85rem;
+      line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="cyber-grid-overlay"></div>
+  <div style="width: min(850px, 100%); display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span class="pulse-dot"></span>
+      <span style="font-size: 0.8rem; color: var(--cyan-primary);">ACCESS LOG TRIPWIRE MONITOR</span>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <a href="server-files.html" class="btn btn-secondary btn-sm">Terminal Shell</a>
+      <a href="admin.html" class="btn btn-primary btn-sm">SOC Console</a>
+    </div>
+  </div>
+
+  <div class="log-stream-card">
+    <div style="display: flex; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid #1e293b; padding-bottom: 12px;">
+      <span style="color: #f87171; font-weight: 700;">📜 /var/log/nginx/access.log (tail -f stream)</span>
+      <span style="color: #64748b; font-size: 0.75rem;">LIVE TAIL ACTIVE</span>
+    </div>
+
+    <div><span style="color: #38bdf8;">192.168.1.10</span> - - [10/Nov/2026:14:15:02] "POST /login HTTP/1.1" 200 <span style="color: #34d399;">auth_success</span></div>
+    <div><span style="color: #38bdf8;">192.168.1.11</span> - - [10/Nov/2026:14:16:18] "POST /login HTTP/1.1" 401 <span style="color: #f59e0b;">invalid_credentials</span></div>
+    <div><span style="color: #ef4444; font-weight: 700;">198.51.100.88</span> - - [10/Nov/2026:14:18:22] "POST /login HTTP/1.1" 302 <span style="color: #ef4444;">SQL_INJECTION_DETECTED (' OR 1=1)</span></div>
+    <div><span style="color: #ef4444; font-weight: 700;">198.51.100.88</span> - - [10/Nov/2026:14:18:40] "GET /fake-db.html HTTP/1.1" 200 <span style="color: #ef4444;">TRAP_SERVED</span></div>
+    <div><span style="color: #38bdf8;">192.168.1.13</span> - - [10/Nov/2026:14:19:05] "POST /login HTTP/1.1" 302 <span style="color: #f97316;">XSS_ATTACK_INTERCEPTED (&lt;script&gt;)</span></div>
+    <div><span style="color: #8b5cf6;">198.51.100.12</span> - - [10/Nov/2026:14:20:11] "GET /config.html HTTP/1.1" 200 <span style="color: #8b5cf6;">HONEYTOKEN_ACCESSED</span></div>
+
+    <div style="margin-top: 18px; color: #64748b;">
+      root@prod-gateway-01:/var/log# tail -f access.log<span style="display: inline-block; width: 8px; height: 14px; background: #22c55e; margin-left: 4px; vertical-align: middle;"></span>
+    </div>
+  </div>
+</body>
+</html>

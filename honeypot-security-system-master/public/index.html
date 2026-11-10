@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HONEYPOT | Next-Gen Cyber Deception & Threat Intelligence Platform</title>
+  <meta name="description" content="Turn attacker interactions into actionable security intelligence with intelligent honeypot deception technology. Enterprise-grade threat telemetry and real-time SOC monitoring.">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="css/cyber-core.css">
+  
+  <!-- Vendor Scripts (Local with offline capability) -->
+  <script src="vendor/three.min.js"></script>
+
+  <style>
+    /* Hero 3D background canvas */
+    #heroCanvasContainer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      opacity: 0.9;
+    }
+
+    .hero-content {
+      pointer-events: none;
+    }
+    .hero-content a, .hero-content button, .hero-content input {
+      pointer-events: auto;
+    }
+
+    /* Decoy Grid */
+    .decoy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .decoy-card {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .decoy-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .decoy-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .decoy-desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+    .decoy-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 14px;
+    }
+
+    /* Mobile Drawer */
+    .mobile-menu-drawer {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: min(320px, 80%);
+      height: 100vh;
+      background: var(--bg-surface-elevated);
+      border-left: 1px solid var(--border-medium);
+      z-index: 2000;
+      padding: 30px 24px;
+      transition: right var(--transition-normal);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: -20px 0 50px rgba(0, 0, 0, 0.8);
+    }
+    .mobile-menu-drawer.open {
+      right: 0;
+    }
+    .mobile-menu-close {
+      align-self: flex-end;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+    .mobile-nav-link {
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 600;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Ambient Overlays -->
+  <div class="cyber-grid-overlay"></div>
+  <div class="scanlines-overlay" id="scanlinesOverlay"></div>
+
+  <!-- A. FLOATING NAVIGATION BAR -->
+  <header class="landing-nav" id="mainNav">
+    <a href="#" class="brand-logo">
+      <div class="brand-icon-wrapper">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+      </div>
+      <span>HONEYPOT</span>
+      <span class="brand-badge">SOC 2.4</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#hero" class="nav-link active">Home</a></li>
+      <li><a href="#features" class="nav-link">Features</a></li>
+      <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+      <li><a href="#threat-intelligence" class="nav-link">Threat Intelligence</a></li>
+      <li><a href="#traps" class="nav-link">Active Traps</a></li>
+      <li><a href="javascript:void(0)" onclick="openDocModal()" class="nav-link">Documentation</a></li>
+      <li><a href="#about" class="nav-link">About</a></li>
+    </ul>
+
+    <div class="nav-actions">
+      <a href="login.html" class="btn btn-secondary btn-sm" title="Corporate Decoy Portal">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <span>Login Trap</span>
+      </a>
+      <a href="admin.html" class="btn btn-primary btn-sm" title="Enterprise Security Operations Center">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+          <polyline points="2 17 12 22 22 17"/>
+          <polyline points="2 12 12 17 22 12"/>
+        </svg>
+        <span>SOC Console</span>
+      </a>
+      <button class="mobile-nav-toggle" id="mobileMenuBtn" aria-label="Toggle Navigation">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="4" x2="20" y1="12" y2="12"/>
+          <line x1="4" x2="20" y1="6" y2="6"/>
+          <line x1="4" x2="20" y1="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-menu-drawer" id="mobileDrawer">
+    <button class="mobile-menu-close" id="mobileDrawerClose">&times;</button>
+    <a href="#hero" class="mobile-nav-link" onclick="toggleMobileMenu()">Home</a>
+    <a href="#features" class="mobile-nav-link" onclick="toggleMobileMenu()">Features</a>
+    <a href="#how-it-works" class="mobile-nav-link" onclick="toggleMobileMenu()">How It Works</a>
+    <a href="#threat-intelligence" class="mobile-nav-link" onclick="toggleMobileMenu()">Threat Intelligence</a>
+    <a href="#traps" class="mobile-nav-link" onclick="toggleMobileMenu()">Active Traps</a>
+    <a href="javascript:void(0)" class="mobile-nav-link" onclick="toggleMobileMenu(); openDocModal()">Documentation</a>
+    <a href="#about" class="mobile-nav-link" onclick="toggleMobileMenu()">About</a>
+    <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px;">
+      <a href="admin.html" class="btn btn-primary">Launch SOC Dashboard</a>
+      <a href="login.html" class="btn btn-secondary">Access Decoy Trap</a>
+    </div>
+  </div>
+
+  <!-- B. HERO SECTION WITH 3D CYBER GLOBE -->
+  <section class="hero-section" id="hero">
+    <!-- 3D Canvas Container -->
+    <div id="heroCanvasContainer"></div>
+
+    <div class="hero-content">
+      <div class="hero-pill">
+        <span class="pulse-dot"></span>
+        <span>DEFENSIVE DECEPTION GRID // SENSORS ARMED</span>
+      </div>
+
+      <h1 class="hero-title">
+        Deception is Your First Line of Defense.
+      </h1>
+
+      <p class="hero-subtitle">
+        Detect, analyze and understand malicious activity through intelligent honeypot technology. Turn attacker interactions into actionable security intelligence.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="admin.html" class="btn btn-primary btn-lg">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="18" height="18" x="3" y="3" rx="2"/>
+            <path d="M3 9h18"/>
+            <path d="M9 21V9"/>
+          </svg>
+          <span>Explore Dashboard</span>
+        </a>
+        <a href="#how-it-works" class="btn btn-secondary btn-lg">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polygon points="10 8 16 12 10 16 10 8"/>
+          </svg>
+          <span>Discover How It Works</span>
+        </a>
+        <button onclick="openAttackSimulator()" class="btn btn-danger btn-lg" title="Test real-time tripwire detection">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v4"/>
+            <path d="m4.93 4.93 2.83 2.83"/>
+            <path d="M2 12h4"/>
+            <path d="m4.93 19.07 2.83-2.83"/>
+            <path d="M12 22v-4"/>
+            <path d="m19.07 19.07-2.83-2.83"/>
+            <path d="M22 12h-4"/>
+            <path d="m19.07 4.93-2.83 2.83"/>
+          </svg>
+          <span>Simulate Attack</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- C. LIVE SECURITY STATISTICS SECTION -->
+  <section class="stats-section" id="stats">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <span class="pulse-dot"></span>
+        <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--cyan-primary); text-transform: uppercase;">
+          LIVE TELEMETRY FEED ACTIVE
+        </span>
+      </div>
+      <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);" id="lastSyncTime">
+        SYNCING WITH SENSORS...
+      </span>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card glass-panel">
+        <div class="stat-value" id="statTotalAttacks">1,678</div>
+        <div class="stat-label">Total Attacks Detected</div>
+      </div>
+      <div class="stat-card glass-panel">
+        <div class="stat-value" style="color: var(--cyan-primary);" id="statActiveHoneypots">6</div>
+        <div class="stat-label">Active Honeypot Decoys</div>
+      </div>
+      <div class="stat-card glass-panel">
+        <div class="stat-value" style="color: var(--blue-bright);" id="statUniqueIPs">142</div>
+        <div class="stat-label">Unique Attacker IPs</div>
+      </div>
+      <div class="stat-card glass-panel">
+        <div class="stat-value" style="color: var(--alert-warning);" id="statSuspiciousConns">384</div>
+        <div class="stat-label">Suspicious Connections</div>
+      </div>
+      <div class="stat-card glass-panel">
+        <div class="stat-value" style="color: var(--alert-critical);" id="statCriticalAlerts">89</div>
+        <div class="stat-label">Critical AI Alerts</div>
+      </div>
+      <div class="stat-card glass-panel">
+        <div class="stat-value" style="color: var(--text-emerald);" id="statCapturedEvents">1,678</div>
+        <div class="stat-label">Total Captured Events</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- D. FEATURES SECTION -->
+  <section class="features-section" id="features">
+    <div class="section-header">
+      <span class="section-tag">// ENTERPRISE CAPABILITIES</span>
+      <h2 class="section-title">Engineered for Proactive Threat Containment</h2>
+      <p class="section-desc">
+        Deploy deceptive decoys that mislead attackers, isolate malicious traffic, and capture forensic intelligence without exposing production infrastructure.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <!-- Feature 1 -->
+      <div class="feature-card glass-panel">
+        <div class="feature-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Real-Time Attack Monitoring</h3>
+        <p class="feature-desc">Continuous interception of adversarial scans, credential attempts, and command injection attacks with sub-second event notification.</p>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="feature-card glass-panel">
+        <div class="feature-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="2" x2="22" y1="12" y2="12"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Attacker IP Tracking</h3>
+        <p class="feature-desc">Deep behavioral IP profiling, request velocity tracking, automated proxy detection, and adversary origin clustering.</p>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="feature-card glass-panel">
+        <div class="feature-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" x2="12" y1="9" y2="13"/>
+            <line x1="12" x2="12.01" y1="17" y2="17"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Suspicious Activity Detection</h3>
+        <p class="feature-desc">Heuristic AI threat scoring identifies automated scrapers, rapid login repetition, and abnormal interaction intervals before damage occurs.</p>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="feature-card glass-panel">
+        <div class="feature-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" x2="8" y1="13" y2="13"/>
+            <line x1="16" x2="8" y1="17" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Honeypot Interaction Logging</h3>
+        <p class="feature-desc">Full payload logging including SQL injection strings, XSS script tags, user-agent fingerprints, and attempt timestamps stored in forensic storage.</p>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="feature-card glass-panel">
+        <div class="feature-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="18" height="18" x="3" y="3" rx="2"/>
+            <path d="m9 9 6 6"/>
+            <path d="m15 9-6 6"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Attack Pattern Analysis</h3>
+        <p class="feature-desc">Automated classification engine categorizes intrusions into Credential Stuffing, Automated Bots, SQL Injection, and High-Frequency probes.</p>
+      </div>
+
+      <!-- Feature 6 -->
+      <div class="feature-card glass-panel">
+        <div class="feature-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="m4.93 4.93 4.24 4.24"/>
+            <path d="m14.83 9.17 4.24-4.24"/>
+            <path d="m14.83 14.83 4.24 4.24"/>
+            <path d="m9.17 14.83-4.24 4.24"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Threat Intelligence</h3>
+        <p class="feature-desc">Real-time mapping of adversary intent against MITRE ATT&CK framework with risk severity score calculated dynamically per attacker IP.</p>
+      </div>
+
+      <!-- Feature 7 -->
+      <div class="feature-card glass-panel">
+        <div class="feature-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Security Alert Management</h3>
+        <p class="feature-desc">Integrated alert triage with instant audio-visual alarms on high-risk intrusions, incident acknowledgment, and remediation state tracking.</p>
+      </div>
+
+      <!-- Feature 8 -->
+      <div class="feature-card glass-panel">
+        <div class="feature-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 3v18h18"/>
+            <path d="m19 9-5 5-4-4-3 3"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Event Visualization</h3>
+        <p class="feature-desc">High-density telemetry dashboards with 3D cyber globes, trend graphs, vector distribution donuts, and live-streaming incident feeds.</p>
+      </div>
+
+      <!-- Feature 9 -->
+      <div class="feature-card glass-panel">
+        <div class="feature-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 14 14"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Historical Attack Analysis</h3>
+        <p class="feature-desc">Forensic replay and multi-parameter filtering across 1,600+ recorded attack events with date-range query tools and forensic drill-downs.</p>
+      </div>
+
+      <!-- Feature 10 -->
+      <div class="feature-card glass-panel">
+        <div class="feature-icon-box">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" x2="12" y1="15" y2="3"/>
+          </svg>
+        </div>
+        <h3 class="feature-title">Security Reporting</h3>
+        <p class="feature-desc">Generate executive security audit summaries in one click, export complete datasets to CSV, and render print-formatted compliance reports.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- E. HOW IT WORKS SECTION -->
+  <section class="workflow-section" id="how-it-works">
+    <div class="section-header">
+      <span class="section-tag">// DECEPTION LIFECYCLE</span>
+      <h2 class="section-title">How Honeypot Technology Defends Your Grid</h2>
+      <p class="section-desc">
+        A seamless 6-stage defensive workflow designed to intercept adversaries at the reconnaissance phase before any production breach can occur.
+      </p>
+    </div>
+
+    <div class="timeline-steps">
+      <!-- Step 1 -->
+      <div class="step-card glass-panel">
+        <div class="step-number">01</div>
+        <span class="step-badge">DEPLOYMENT</span>
+        <h3 class="step-title">Deploy a Honeypot</h3>
+        <p class="step-desc">Deploy deceptive lures mimicking authentic web portals, database dumps, and server shells across vulnerable perimeter attack vectors.</p>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-card glass-panel">
+        <div class="step-number">02</div>
+        <span class="step-badge">DETECTION</span>
+        <h3 class="step-title">Detect Suspicious Interactions</h3>
+        <p class="step-desc">Tripwire sensors silently intercept unauthorized connection attempts, abnormal user-agents, automated bot crawlers, and injection queries.</p>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="step-card glass-panel">
+        <div class="step-number">03</div>
+        <span class="step-badge">TELEMETRY</span>
+        <h3 class="step-title">Capture Relevant Activity Logs</h3>
+        <p class="step-desc">Zero-impact containment logs complete HTTP headers, credentials entered, IP addresses, velocity, and raw payloads without tipping off the intruder.</p>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="step-card glass-panel">
+        <div class="step-number">04</div>
+        <span class="step-badge">AI ANALYSIS</span>
+        <h3 class="step-title">Analyze Attacker Behavior</h3>
+        <p class="step-desc">The AI threat evaluation engine calculates cumulative risk scores, detects injection attack patterns, and differentiates casual scans from targeted attacks.</p>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="step-card glass-panel">
+        <div class="step-number">05</div>
+        <span class="step-badge">TRIAGE</span>
+        <h3 class="step-title">Generate Security Alerts</h3>
+        <p class="step-desc">Instantaneous alarms dispatch to the SOC console, triggering audio notifications, risk badge updates, and automated quarantine advisories.</p>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="step-card glass-panel">
+        <div class="step-number">06</div>
+        <span class="step-badge">INTELLIGENCE</span>
+        <h3 class="step-title">Visualize Threat Intelligence</h3>
+        <p class="step-desc">Forensic logs and adversary profiles stream onto the interactive 3D threat globe and real-time SOC incident feed for proactive defense hardening.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- F. 3D THREAT INTELLIGENCE VISUALIZATION SECTION -->
+  <section class="threat-vis-section" id="threat-intelligence">
+    <div class="section-header">
+      <span class="section-tag">// GLOBAL THREAT RECONNAISSANCE</span>
+      <h2 class="section-title">Interactive 3D Threat Telemetry Grid</h2>
+      <p class="section-desc">
+        Real-time telemetry and illustrative adversary origins correlated with active honeypot sensor stations around the world.
+      </p>
+    </div>
+
+    <div class="threat-vis-container glass-panel" style="padding: 32px;">
+      <div class="threat-globe-box" id="threatGlobeContainer">
+        <!-- 3D Threat Globe rendered here -->
+      </div>
+
+      <div class="threat-details-panel">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <h3 style="font-size: 1.25rem; font-weight: 700;">Sensor Hub Telemetry</h3>
+          <span class="badge badge-info">HYBRID LIVE FEED</span>
+        </div>
+        <p style="font-size: 0.875rem; color: var(--text-secondary);">
+          Rotate and interact with the 3D globe to inspect active honeypot interception nodes and adversary clusters.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button onclick="rotateThreatGlobe(0)" class="btn btn-secondary" style="justify-content: flex-start; text-align: left;">
+            <span class="pulse-dot"></span>
+            <span>US-WEST (Silicon Valley) - SSO Decoy Active</span>
+          </button>
+          <button onclick="rotateThreatGlobe(2)" class="btn btn-secondary" style="justify-content: flex-start; text-align: left;">
+            <span class="pulse-dot"></span>
+            <span>EU-LON (London) - Database Vault Decoy Active</span>
+          </button>
+          <button onclick="rotateThreatGlobe(4)" class="btn btn-secondary" style="justify-content: flex-start; text-align: left;">
+            <span class="pulse-dot"></span>
+            <span>AP-NE (Tokyo) - Shell Emulation Active</span>
+          </button>
+          <button onclick="rotateThreatGlobe(8)" class="btn btn-secondary" style="justify-content: flex-start; text-align: left;">
+            <span class="pulse-dot"></span>
+            <span>IN-CENTRAL (Mumbai) - Config Trap Armed</span>
+          </button>
+        </div>
+
+        <div style="background: rgba(0, 0, 0, 0.4); padding: 14px; border-radius: 10px; border: 1px solid var(--border-subtle); margin-top: 10px;">
+          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--cyan-primary); margin-bottom: 4px;">
+            ADVERSARY MITRE ATT&CK SIGNATURES DETECTED
+          </div>
+          <div style="font-size: 0.8rem; color: var(--text-secondary);">
+            • T1190: Exploit Public-Facing Application (SQLi)<br>
+            • T1110: Brute Force & Credential Stuffing<br>
+            • T1059: Command & Scripting Interpreter (cURL / Bash)
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- G. ACTIVE HONEYPOT DECOYS SHOWCASE -->
+  <section class="features-section" id="traps" style="padding-top: 0;">
+    <div class="section-header">
+      <span class="section-tag">// DECEPTION MATRIX</span>
+      <h2 class="section-title">Live Honeypot Sensor Inventory</h2>
+      <p class="section-desc">
+        Explore the 6 active deceptive environments running on this system. Each lure captures attacker interactions and routes them to forensic containment.
+      </p>
+    </div>
+
+    <div class="decoy-grid">
+      <!-- Trap 1 -->
+      <div class="decoy-card glass-panel">
+        <div>
+          <div class="decoy-header">
+            <span class="badge badge-info">HTTP / SSO</span>
+            <span class="pulse-dot"></span>
+          </div>
+          <h3 class="decoy-title">Enterprise Single-Sign-On</h3>
+          <p class="decoy-desc">Deceptive corporate login interface designed to capture credential stuffing, brute force patterns, and SQLi bypass attempts.</p>
+        </div>
+        <div class="decoy-meta">
+          <span>Route: <code>/login.html</code></span>
+          <a href="login.html" class="btn btn-secondary btn-sm">Inspect Decoy</a>
+        </div>
+      </div>
+
+      <!-- Trap 2 -->
+      <div class="decoy-card glass-panel">
+        <div>
+          <div class="decoy-header">
+            <span class="badge badge-critical">DATABASE DUMP</span>
+            <span class="pulse-dot danger"></span>
+          </div>
+          <h3 class="decoy-title">Database Vault Trap</h3>
+          <p class="decoy-desc">Simulated phpMyAdmin dump console that serves synthetic user tables to adversaries probing for SQL injection vulnerabilities.</p>
+        </div>
+        <div class="decoy-meta">
+          <span>Route: <code>/fake-db.html</code></span>
+          <a href="fake-db.html" class="btn btn-secondary btn-sm">Inspect Decoy</a>
+        </div>
+      </div>
+
+      <!-- Trap 3 -->
+      <div class="decoy-card glass-panel">
+        <div>
+          <div class="decoy-header">
+            <span class="badge badge-high">TERMINAL SHELL</span>
+            <span class="pulse-dot"></span>
+          </div>
+          <h3 class="decoy-title">Root Bash Shell Environment</h3>
+          <p class="decoy-desc">Interactive Linux terminal emulator serving decoy files (<code>config.php</code>, <code>backup.zip</code>) to automated scrapers and bots.</p>
+        </div>
+        <div class="decoy-meta">
+          <span>Route: <code>/server-files.html</code></span>
+          <a href="server-files.html" class="btn btn-secondary btn-sm">Inspect Decoy</a>
+        </div>
+      </div>
+
+      <!-- Trap 4 -->
+      <div class="decoy-card glass-panel">
+        <div>
+          <div class="decoy-header">
+            <span class="badge badge-warning">CONFIG VAULT</span>
+            <span class="pulse-dot"></span>
+          </div>
+          <h3 class="decoy-title">Leaked Configuration Decoy</h3>
+          <p class="decoy-desc">Simulates exposed environment variables and production config files containing honey-tokens to trace unauthorized recon.</p>
+        </div>
+        <div class="decoy-meta">
+          <span>Route: <code>/config.html</code></span>
+          <a href="config.html" class="btn btn-secondary btn-sm">Inspect Decoy</a>
+        </div>
+      </div>
+
+      <!-- Trap 5 -->
+      <div class="decoy-card glass-panel">
+        <div>
+          <div class="decoy-header">
+            <span class="badge badge-info">ARCHIVE LURE</span>
+            <span class="pulse-dot"></span>
+          </div>
+          <h3 class="decoy-title">Legacy Backup Archive</h3>
+          <p class="decoy-desc">Exposes pseudo-encrypted archive files and fake password dumps to monitor unauthorized exfiltration attempts.</p>
+        </div>
+        <div class="decoy-meta">
+          <span>Route: <code>/backup.html</code></span>
+          <a href="backup.html" class="btn btn-secondary btn-sm">Inspect Decoy</a>
+        </div>
+      </div>
+
+      <!-- Trap 6 -->
+      <div class="decoy-card glass-panel">
+        <div>
+          <div class="decoy-header">
+            <span class="badge badge-low">LOG MONITOR</span>
+            <span class="pulse-dot"></span>
+          </div>
+          <h3 class="decoy-title">Server Access Log Tripwire</h3>
+          <p class="decoy-desc">Exposes deceptive server access.log stream to identify adversary reconnaissance and directory enumeration probes.</p>
+        </div>
+        <div class="decoy-meta">
+          <span>Route: <code>/logs.html</code></span>
+          <a href="logs.html" class="btn btn-secondary btn-sm">Inspect Decoy</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- H. ABOUT SECTION -->
+  <section class="features-section" id="about" style="padding-top: 20px;">
+    <div class="glass-panel" style="padding: 48px; border-radius: 20px; text-align: center; position: relative; overflow: hidden;">
+      <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(56, 189, 248, 0.2), transparent); pointer-events: none;"></div>
+      
+      <span class="section-tag">// ARCHITECTURAL MISSION</span>
+      <h2 style="font-family: var(--font-display); font-size: 2.2rem; margin-bottom: 16px;">
+        Empowering Defensive Operations Through Intelligent Deception
+      </h2>
+      <p style="max-width: 720px; margin: 0 auto 32px; color: var(--text-secondary); font-size: 1.05rem; line-height: 1.6;">
+        Honeypot Security System transforms the asymmetric advantage in favor of security operators. By introducing deceptive surfaces into the enterprise grid, security teams observe adversarial tactics, techniques, and procedures (TTPs) in an isolated, zero-risk containment zone.
+      </p>
+
+      <div style="display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap;">
+        <a href="admin.html" class="btn btn-primary btn-lg">Launch Enterprise SOC Console</a>
+        <a href="https://github.com" target="_blank" class="btn btn-secondary btn-lg">View GitHub Repository</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="border-top: 1px solid var(--border-subtle); padding: 48px 24px; background: var(--bg-surface); margin-top: 60px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="brand-icon-wrapper" style="width: 32px; height: 32px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <span style="font-family: var(--font-display); font-weight: 700; font-size: 1.1rem;">HONEYPOT SECURITY SYSTEM</span>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 24px; font-size: 0.85rem; color: var(--text-muted);">
+        <a href="admin.html" style="color: inherit; text-decoration: none;">SOC Console</a>
+        <a href="login.html" style="color: inherit; text-decoration: none;">Deception Portal</a>
+        <a href="api/overview" style="color: inherit; text-decoration: none;">REST Telemetry API</a>
+        <a href="javascript:void(0)" onclick="openDocModal()" style="color: inherit; text-decoration: none;">Documentation</a>
+      </div>
+
+      <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">
+        VERSION 2.4.0 // ALL SENSORS NOMINAL
+      </div>
+    </div>
+  </footer>
+
+  <!-- MODAL: ATTACK SIMULATOR -->
+  <div class="modal-overlay" id="attackModal">
+    <div class="modal-content glass-panel" style="padding: 28px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span class="pulse-dot danger"></span>
+          <h3 style="font-size: 1.2rem; font-weight: 700;">Simulate Honeypot Attack Vector</h3>
+        </div>
+        <button onclick="closeAttackSimulator()" style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.4rem;">&times;</button>
+      </div>
+
+      <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 20px;">
+        Trigger a live attack payload against the Honeypot backend. The event will be evaluated by the AI heuristic engine and logged immediately to verify live detection.
+      </p>
+
+      <form id="attackSimForm" onsubmit="submitSimulatedAttack(event)">
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; font-family: var(--font-mono); font-size: 0.75rem; color: var(--cyan-primary); margin-bottom: 6px;">
+            ATTACK VECTOR TYPE
+          </label>
+          <select id="simVectorType" style="width: 100%; padding: 10px; background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 8px; color: var(--text-primary); font-family: var(--font-sans);">
+            <option value="sql_injection">SQL Injection (' OR 1=1 --)</option>
+            <option value="xss">Cross-Site Scripting (&lt;script&gt;)</option>
+            <option value="brute_force">Credential Brute Force (High frequency)</option>
+            <option value="automation_tool">Automation Tool (sqlmap / cURL User-Agent)</option>
+            <option value="bot_activity">Sub-500ms Bot Speed Attack</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <label style="display: block; font-family: var(--font-mono); font-size: 0.75rem; color: var(--cyan-primary); margin-bottom: 6px;">
+            TARGET USERNAME
+          </label>
+          <input type="text" id="simUsername" value="admin" style="width: 100%; padding: 10px; background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 8px; color: var(--text-primary); font-family: var(--font-mono);">
+        </div>
+
+        <div style="margin-bottom: 24px;">
+          <label style="display: block; font-family: var(--font-mono); font-size: 0.75rem; color: var(--cyan-primary); margin-bottom: 6px;">
+            SIMULATED ADVERSARY IP
+          </label>
+          <input type="text" id="simIp" value="198.51.100.88" style="width: 100%; padding: 10px; background: var(--bg-primary); border: 1px solid var(--border-medium); border-radius: 8px; color: var(--text-primary); font-family: var(--font-mono);">
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end;">
+          <button type="button" onclick="closeAttackSimulator()" class="btn btn-ghost">Cancel</button>
+          <button type="submit" class="btn btn-danger">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+            <span>Trigger Vector</span>
+          </button>
+        </div>
+      </form>
+
+      <div id="simResultBox" style="display: none; margin-top: 16px; padding: 14px; border-radius: 8px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);">
+        <div style="color: var(--status-healthy); font-weight: 600; font-size: 0.85rem;" id="simResultMsg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: DOCUMENTATION -->
+  <div class="modal-overlay" id="docModal">
+    <div class="modal-content glass-panel" style="padding: 32px; max-width: 750px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <h3 style="font-size: 1.3rem; font-weight: 700;">Honeypot Deception Architecture</h3>
+        <button onclick="closeDocModal()" style="background: transparent; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.4rem;">&times;</button>
+      </div>
+
+      <div style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; display: flex; flex-direction: column; gap: 14px;">
+        <h4 style="color: var(--cyan-primary); font-size: 1rem;">1. System Architecture</h4>
+        <p>Honeypot Security System operates on an isolated deception grid. Malicious requests arriving at deceptive endpoints are evaluated through risk heuristics, categorized, logged into tamper-resistant forensic files and SQL records, and served realistic decoy responses.</p>
+
+        <h4 style="color: var(--cyan-primary); font-size: 1rem;">2. Risk Calculation Matrix</h4>
+        <p>• <strong>SQL Injection (Risk 5):</strong> Triggers on SQL union, syntax escapes, and boolean logic (' OR 1=1). Intercepted and routed to the fake database dump trap.<br>
+        • <strong>Automation Tools (Risk 5):</strong> Detected via User-Agent inspection (sqlmap, cURL, python, postman, empty agents). Routed to the simulated server terminal.<br>
+        • <strong>Cross-Site Scripting (Risk 4):</strong> Intercepts script tags, image error triggers, and javascript URIs.<br>
+        • <strong>Brute Force & Bot Speed (Risk 3-4):</strong> Flags rapid requests under 500ms or 3+ failures within 20 seconds.</p>
+
+        <h4 style="color: var(--cyan-primary); font-size: 1rem;">3. SOC Integration</h4>
+        <p>The SOC Console provides enterprise operators with real-time incident triage, MITRE ATT&CK alignment, IP forensic lookup, and automated executive report generation with CSV download.</p>
+      </div>
+
+      <div style="margin-top: 24px; text-align: right;">
+        <button onclick="closeDocModal()" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/cyber-globe.js"></script>
+
+  <script>
+    // 1. Initialize Hero 3D Globe
+    let heroGlobe = null;
+    let threatGlobe = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const heroContainer = document.getElementById('heroCanvasContainer');
+      if (heroContainer && window.CyberGlobe) {
+        heroGlobe = CyberGlobe.init(heroContainer, {
+          radius: 130,
+          autoRotateSpeed: 0.002,
+          particleCount: 1500
+        });
+      }
+
+      const threatContainer = document.getElementById('threatGlobeContainer');
+      if (threatContainer && window.CyberGlobe) {
+        threatGlobe = CyberGlobe.init(threatContainer, {
+          radius: 110,
+          autoRotateSpeed: 0.003,
+          particleCount: 1200
+        });
+      }
+
+      // Fetch live statistics
+      loadLiveStatistics();
+      // Poll stats every 10 seconds
+      setInterval(loadLiveStatistics, 10000);
+    });
+
+    function rotateThreatGlobe(index) {
+      if (threatGlobe && threatGlobe.rotateToHub) {
+        threatGlobe.rotateToHub(index);
+      }
+    }
+
+    // 2. Fetch Live Statistics from Backend
+    async function loadLiveStatistics() {
+      try {
+        const res = await fetch('/api/overview');
+        if (!res.ok) throw new Error("API offline");
+        const data = await res.json();
+
+        animateCounter('statTotalAttacks', data.totalAttacks || 1678);
+        animateCounter('statActiveHoneypots', data.activeHoneypots || 6);
+        animateCounter('statUniqueIPs', data.uniqueIPs || 142);
+        animateCounter('statSuspiciousConns', (data.attackBreakdown?.suspicious_ip || 0) + (data.attackBreakdown?.bot_activity || 0) || 384);
+        animateCounter('statCriticalAlerts', data.criticalIncidents || 89);
+        animateCounter('statCapturedEvents', data.totalEvents || 1678);
+
+        const now = new Date();
+        document.getElementById('lastSyncTime').innerText = `SYNCED: ${now.toLocaleTimeString()}`;
+      } catch (err) {
+        // Fallback to /stats
+        try {
+          const res = await fetch('/stats');
+          const data = await res.json();
+          animateCounter('statTotalAttacks', data.total || 1678);
+          animateCounter('statCapturedEvents', data.total || 1678);
+        } catch(e) {}
+      }
+    }
+
+    function animateCounter(id, targetValue) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const start = parseInt(el.innerText.replace(/,/g, '')) || 0;
+      const duration = 1200;
+      const startTime = performance.now();
+
+      function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(start + (targetValue - start) * easeOut);
+        el.innerText = current.toLocaleString();
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
+    // 3. Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('mainNav');
+      if (window.scrollY > 40) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    // 4. Mobile Menu
+    const mobileDrawer = document.getElementById('mobileDrawer');
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileDrawerClose = document.getElementById('mobileDrawerClose');
+
+    function toggleMobileMenu() {
+      mobileDrawer.classList.toggle('open');
+    }
+    if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+    if (mobileDrawerClose) mobileDrawerClose.addEventListener('click', toggleMobileMenu);
+
+    // 5. Attack Simulator Modal
+    function openAttackSimulator() {
+      document.getElementById('attackModal').style.display = 'flex';
+      document.getElementById('simResultBox').style.display = 'none';
+    }
+    function closeAttackSimulator() {
+      document.getElementById('attackModal').style.display = 'none';
+    }
+
+    async function submitSimulatedAttack(e) {
+      e.preventDefault();
+      const type = document.getElementById('simVectorType').value;
+      const username = document.getElementById('simUsername').value;
+      const ip = document.getElementById('simIp').value;
+
+      try {
+        const res = await fetch('/api/test-attack', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type, username, ip })
+        });
+        const data = await res.json();
+        
+        const resultBox = document.getElementById('simResultBox');
+        const resultMsg = document.getElementById('simResultMsg');
+        resultBox.style.display = 'block';
+        resultMsg.innerHTML = `✅ <strong>INTERCEPTED:</strong> ${data.message} (Risk Score: ${data.incident.riskScore}/5, Threat Level: ${data.incident.threatLevel})`;
+        
+        // Refresh stats
+        loadLiveStatistics();
+      } catch (err) {
+        alert("Failed to submit simulated attack: " + err.message);
+      }
+    }
+
+    // 6. Documentation Modal
+    function openDocModal() {
+      document.getElementById('docModal').style.display = 'flex';
+    }
+    function closeDocModal() {
+      document.getElementById('docModal').style.display = 'none';
+    }
+
+    // Close modals on clicking overlay
+    window.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal-overlay')) {
+        e.target.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
+
