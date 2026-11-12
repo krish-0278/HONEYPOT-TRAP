@@ -10,24 +10,43 @@ const app = express();
 // Enable CORS
 app.use(cors());
 
-// 🔥 MySQL Connection (Optional - graceful fallback to logs.json)
-let isDbConnected = false;
-const db = mysql.createConnection({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || 'root',
-  database: process.env.DB_NAME || 'honeypot'
+// Global crash protection
+process.on('uncaughtException', err => {
+  console.log('⚠️ [Handled Exception]:', err.message);
+});
+process.on('unhandledRejection', reason => {
+  console.log('⚠️ [Handled Rejection]:', reason);
 });
 
-db.connect(err => {
-  if (err) {
-    console.log("ℹ️  MySQL not connected, running in high-performance local JSON mode:", err.code || err.message);
+// 🔥 MySQL Connection (Optional - graceful fallback to logs.json)
+let isDbConnected = false;
+let db = null;
+
+try {
+  db = mysql.createConnection({
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || 'root',
+    database: process.env.DB_NAME || 'honeypot'
+  });
+
+  db.on('error', err => {
     isDbConnected = false;
-  } else {
-    console.log("✅ Connected to MySQL database");
-    isDbConnected = true;
-  }
-});
+  });
+
+  db.connect(err => {
+    if (err) {
+      console.log("ℹ️  MySQL not connected, running in high-performance local JSON mode:", err.code || err.message);
+      isDbConnected = false;
+    } else {
+      console.log("✅ Connected to MySQL database");
+      isDbConnected = true;
+    }
+  });
+} catch (e) {
+  console.log("ℹ️  MySQL connection skipped, using local JSON store.");
+  isDbConnected = false;
+}
 
 // Middleware
 app.use(bodyParser.json());

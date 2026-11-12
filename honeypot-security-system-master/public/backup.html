@@ -3,65 +3,343 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>/var/backups/backup.zip | Extracted Archive Decoy</title>
+  <title>/var/backups/backup.zip — Honeypot Security System</title>
   <meta name="description" content="Extracted Backup Archive Tripwire. Deception Honeypot Environment.">
   <link rel="stylesheet" href="css/cyber-core.css">
   <style>
+    /* ── Page chrome ── */
     body {
-      background: #020617;
-      color: #22c55e;
-      font-family: var(--font-mono);
-      padding: 30px 20px;
+      background: var(--bg-page);
+      color: var(--text-body);
+      font-family: var(--font-sans);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
     }
+
+    /* ── Top navigation bar ── */
+    .corp-nav {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-grey);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      flex-shrink: 0;
+    }
+    .corp-nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--champagne-gold);
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      letter-spacing: 0.04em;
+    }
+    .corp-nav-brand svg { flex-shrink: 0; }
+    .corp-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .corp-nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 6px 14px;
+      border-radius: 5px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .corp-nav-links a:hover { background: var(--bg-elevated); color: var(--text-heading); }
+    .corp-nav-links a.primary-link {
+      background: var(--primary-accent);
+      color: #101418;
+      font-weight: 700;
+    }
+    .corp-nav-links a.primary-link:hover { background: var(--teal-hover); }
+
+    /* ── Page layout ── */
+    .page-wrapper {
+      flex: 1;
+      max-width: 860px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .breadcrumb a { color: var(--primary-accent); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--border-grey); }
+
+    /* ── Status pill ── */
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary-accent);
+      box-shadow: 0 0 8px rgba(115, 159, 152, 0.6);
+      flex-shrink: 0;
+    }
+    .status-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--champagne-gold);
+    }
+
+    /* ── Main card ── */
     .archive-card {
-      width: min(800px, 100%);
-      background: #000;
-      border: 1px solid #1e293b;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      background: var(--bg-card);
+      border: 1px solid var(--border-grey);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Card header */
+    .archive-card-header {
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-grey);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .archive-title {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--champagne-gold);
+    }
+    .archive-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      gap: 16px;
+    }
+    .archive-meta span { display: flex; align-items: center; gap: 4px; }
+
+    /* Card body */
+    .archive-body { padding: 20px; }
+
+    /* ── File tree ── */
+    .file-tree-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .file-tree {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-grey);
+      border-left: 4px solid var(--primary-accent);
+      border-radius: 6px;
+      padding: 14px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.83rem;
+      line-height: 1.9;
+      color: var(--text-body);
+      margin-bottom: 24px;
+    }
+    .file-tree .file-icon { margin-right: 6px; }
+    .file-tree .file-sensitive { color: var(--error-red); font-weight: 600; }
+    .file-tree .file-size { color: var(--text-muted); margin-left: 6px; }
+
+    /* ── Divider ── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border-grey);
+      margin: 0 0 20px;
+    }
+
+    /* ── Password dump ── */
+    .dump-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .dump-block {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-grey);
+      border-radius: 6px;
+      padding: 14px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.83rem;
+      line-height: 1.9;
+    }
+    .dump-row { display: flex; gap: 8px; align-items: baseline; }
+    .dump-user { color: var(--primary-accent); min-width: 80px; }
+    .dump-sep  { color: var(--text-muted); }
+    .dump-pass { color: var(--error-red); font-weight: 600; }
+
+    /* ── Info alert ── */
+    .info-alert {
+      background: rgba(115, 159, 152, 0.12);
+      border: 1px solid rgba(115, 159, 152, 0.35);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 0.8rem;
+      color: var(--text-body);
+      margin-top: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .info-alert svg { flex-shrink: 0; margin-top: 1px; color: var(--primary-accent); }
+
+    /* ── Footer ── */
+    .page-footer {
+      background: var(--bg-card);
+      border-top: 1px solid var(--border-grey);
+      color: var(--text-muted);
+      text-align: center;
+      font-size: 0.75rem;
+      padding: 14px 20px;
+      margin-top: auto;
+    }
+
+    @media (max-width: 600px) {
+      .archive-card-header { flex-direction: column; align-items: flex-start; }
+      .corp-nav-links a:not(.primary-link) { display: none; }
     }
   </style>
 </head>
 <body>
-  <div class="cyber-grid-overlay"></div>
-  <div style="width: min(800px, 100%); display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <span class="pulse-dot"></span>
-      <span style="font-size: 0.8rem; color: var(--cyan-primary);">EXPOSED BACKUP ARCHIVE HONEYPOT</span>
-    </div>
-    <div style="display: flex; gap: 8px;">
-      <a href="server-files.html" class="btn btn-secondary btn-sm">Terminal Shell</a>
-      <a href="admin.html" class="btn btn-primary btn-sm">SOC Console</a>
-    </div>
-  </div>
 
-  <div class="archive-card">
-    <div style="display: flex; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid #1e293b; padding-bottom: 12px;">
-      <span style="color: #f87171; font-weight: 700;">📦 /var/backups/production_dump_2026.zip</span>
-      <span style="color: #64748b; font-size: 0.75rem;">ARCHIVE SIZE: 48.2 MB</span>
+  <!-- ═══ Top Navigation ═══ -->
+  <nav class="corp-nav">
+    <a href="index.html" class="corp-nav-brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z" fill="rgba(255,255,255,0.15)" stroke="#fff" stroke-width="1.5"/>
+        <path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      HONEYPOT
+    </a>
+    <div class="corp-nav-links">
+      <a href="server-files.html">File System</a>
+      <a href="admin.html" class="primary-link">SOC Console</a>
+    </div>
+  </nav>
+
+  <!-- ═══ Page Content ═══ -->
+  <main class="page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="server-files.html">/var/www</a>
+      <span class="breadcrumb-sep">›</span>
+      <a href="#">backups</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>production_dump_2026.zip</span>
+    </nav>
+
+    <!-- Status + badge row -->
+    <div class="status-row">
+      <span class="status-dot" title="Tripwire Active"></span>
+      <span class="status-label">Archive Lure Active</span>
+      <span class="badge badge-high" style="margin-left:4px;">ARCHIVE LURE</span>
+      <span class="badge badge-medium" style="margin-left:4px;">HONEYPOT DECOY</span>
     </div>
 
-    <div style="color: #38bdf8; margin-bottom: 8px;">📁 Directory Tree:</div>
-    <div style="color: #94a3b8; font-size: 0.85rem; line-height: 1.6; margin-bottom: 20px;">
-      ├── database_master.sql (24.1 MB)<br>
-      ├── passwords.txt (2.4 KB)<br>
-      ├── admin_credentials.txt (1.1 KB)<br>
-      ├── payment_records.csv (14.2 MB)<br>
-      └── logs_backup.log (7.5 MB)
+    <!-- Main card -->
+    <div class="archive-card">
+
+      <!-- Card header -->
+      <div class="archive-card-header">
+        <span class="archive-title">
+          📦&nbsp; /var/backups/production_dump_2026.zip
+        </span>
+        <div class="archive-meta">
+          <span>📁 5 files</span>
+          <span>📏 48.2 MB</span>
+          <span>🕐 2026-11-10 14:00 UTC</span>
+        </div>
+      </div>
+
+      <!-- Card body -->
+      <div class="archive-body">
+
+        <!-- Directory tree -->
+        <div class="file-tree-label">Directory Tree — Extracted Contents</div>
+        <div class="file-tree">
+          <div>├── <span class="file-icon">🗃️</span> database_master.sql<span class="file-size">24.1 MB</span></div>
+          <div>├── <span class="file-icon">📄</span> <span class="file-sensitive">passwords.txt</span><span class="file-size">2.4 KB</span></div>
+          <div>├── <span class="file-icon">📄</span> <span class="file-sensitive">admin_credentials.txt</span><span class="file-size">1.1 KB</span></div>
+          <div>├── <span class="file-icon">📊</span> payment_records.csv<span class="file-size">14.2 MB</span></div>
+          <div>└── <span class="file-icon">📋</span> logs_backup.log<span class="file-size">7.5 MB</span></div>
+        </div>
+
+        <hr class="section-divider">
+
+        <!-- Password dump -->
+        <div class="dump-label">Extracted Sample — passwords.txt</div>
+        <div class="dump-block">
+          <div class="dump-row">
+            <span class="dump-user">admin</span>
+            <span class="dump-sep">:</span>
+            <span class="dump-pass">admin123</span>
+          </div>
+          <div class="dump-row">
+            <span class="dump-user">user</span>
+            <span class="dump-sep">:</span>
+            <span class="dump-pass">user123</span>
+          </div>
+          <div class="dump-row">
+            <span class="dump-user">john</span>
+            <span class="dump-sep">:</span>
+            <span class="dump-pass">john@123</span>
+          </div>
+          <div class="dump-row">
+            <span class="dump-user">root</span>
+            <span class="dump-sep">:</span>
+            <span class="dump-pass">toor</span>
+          </div>
+        </div>
+
+        <!-- Info notice -->
+        <div class="info-alert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span>This is a <strong>deception honeypot decoy</strong>. All credentials and file contents shown are fabricated lures. Any access attempt has been logged and is being monitored by the SOC platform.</span>
+        </div>
+
+      </div>
     </div>
 
-    <div style="border-top: 1px solid #1e293b; padding-top: 14px;">
-      <div style="color: #facc15; font-size: 0.8rem; margin-bottom: 6px;">--- Extracted Sample (passwords.txt) ---</div>
-      <pre style="color: #34d399; font-size: 0.85rem;">admin : admin123
-user  : user123
-john  : john@123
-root  : toor</pre>
-    </div>
-  </div>
+  </main>
+
+  <!-- ═══ Footer ═══ -->
+  <footer class="page-footer">
+    Honeypot Security System &mdash; Deception Honeypot Platform &mdash; All interactions monitored and logged.
+  </footer>
+
 </body>
 </html>

@@ -3,61 +3,425 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>/var/log/access.log | Server Access Telemetry Stream</title>
+  <title>/var/log/access.log — Honeypot Security System</title>
   <meta name="description" content="Server Access Log Tripwire. Deception Honeypot Environment.">
   <link rel="stylesheet" href="css/cyber-core.css">
   <style>
+    /* ── Page chrome ── */
     body {
-      background: #020617;
-      color: #22c55e;
-      font-family: var(--font-mono);
-      padding: 30px 20px;
+      background: var(--bg-page);
+      color: var(--text-body);
+      font-family: var(--font-sans);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
     }
-    .log-stream-card {
-      width: min(850px, 100%);
-      background: #000;
-      border: 1px solid #1e293b;
-      border-radius: 12px;
-      padding: 24px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+
+    /* ── Top navigation bar ── */
+    .corp-nav {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-grey);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+      flex-shrink: 0;
+    }
+    .corp-nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--champagne-gold);
+      font-weight: 700;
+      font-size: 1rem;
+      text-decoration: none;
+      letter-spacing: 0.04em;
+    }
+    .corp-nav-brand svg { flex-shrink: 0; }
+    .corp-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .corp-nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
       font-size: 0.85rem;
-      line-height: 1.8;
+      padding: 6px 14px;
+      border-radius: 5px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .corp-nav-links a:hover { background: var(--bg-elevated); color: var(--text-heading); }
+    .corp-nav-links a.primary-link {
+      background: var(--primary-accent);
+      color: #101418;
+      font-weight: 700;
+    }
+    .corp-nav-links a.primary-link:hover { background: var(--teal-hover); }
+
+    /* ── Page layout ── */
+    .page-wrapper {
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .breadcrumb a { color: var(--primary-accent); text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb-sep { color: var(--border-grey); }
+
+    /* ── Status pill ── */
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary-accent);
+      box-shadow: 0 0 8px rgba(115, 159, 152, 0.6);
+      flex-shrink: 0;
+    }
+    .status-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--champagne-gold);
+    }
+
+    /* ── Main card ── */
+    .log-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-grey);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Card header */
+    .log-card-header {
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-grey);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .log-title {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--champagne-gold);
+    }
+    .log-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(115, 159, 152, 0.15);
+      color: var(--primary-accent);
+      border: 1px solid rgba(115, 159, 152, 0.4);
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .live-pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--primary-accent);
+      box-shadow: 0 0 6px rgba(115, 159, 152, 0.6);
+    }
+
+    /* Card body */
+    .log-body { padding: 20px; }
+
+    /* ── Summary strip ── */
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .sum-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-grey);
+      border-radius: 6px;
+      padding: 10px 12px;
+      text-align: center;
+    }
+    .sum-box-value {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-heading);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .sum-box-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .sum-box.critical .sum-box-value { color: var(--error-red); }
+    .sum-box.warning .sum-box-value  { color: var(--champagne-gold); }
+
+    /* ── Log stream ── */
+    .log-stream-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .log-stream {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-grey);
+      border-left: 4px solid var(--primary-accent);
+      border-radius: 6px;
+      padding: 14px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 2;
+      overflow-x: auto;
+    }
+    .log-line { display: flex; flex-wrap: wrap; gap: 4px; align-items: baseline; }
+    .log-ip       { color: var(--champagne-gold); font-weight: 600; min-width: 110px; }
+    .log-ip.threat{ color: var(--error-red);   font-weight: 700; }
+    .log-ip.warn  { color: var(--champagne-gold); }
+    .log-ts       { color: var(--text-muted); font-size: 0.75em; }
+    .log-method   { color: var(--text-body); }
+    .log-status   { color: var(--text-body); }
+    .log-event    { font-weight: 600; }
+    .log-event.ok       { color: var(--primary-accent); }
+    .log-event.info     { color: var(--teal-hover); }
+    .log-event.warn     { color: var(--champagne-gold); }
+    .log-event.critical { color: var(--error-red); }
+
+    /* Cursor blink */
+    .cursor {
+      display: inline-block;
+      width: 7px;
+      height: 13px;
+      background: var(--champagne-gold);
+      vertical-align: middle;
+      margin-left: 2px;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* ── Info alert ── */
+    .info-alert {
+      background: rgba(115, 159, 152, 0.12);
+      border: 1px solid rgba(115, 159, 152, 0.35);
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-size: 0.8rem;
+      color: var(--text-body);
+      margin-top: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .info-alert svg { flex-shrink: 0; margin-top: 1px; color: var(--primary-accent); }
+
+    /* ── Footer ── */
+    .page-footer {
+      background: var(--bg-card);
+      border-top: 1px solid var(--border-grey);
+      color: var(--text-muted);
+      text-align: center;
+      font-size: 0.75rem;
+      padding: 14px 20px;
+      margin-top: auto;
+    }
+
+    @media (max-width: 600px) {
+      .log-card-header { flex-direction: column; align-items: flex-start; }
+      .corp-nav-links a:not(.primary-link) { display: none; }
     }
   </style>
 </head>
 <body>
-  <div class="cyber-grid-overlay"></div>
-  <div style="width: min(850px, 100%); display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <span class="pulse-dot"></span>
-      <span style="font-size: 0.8rem; color: var(--cyan-primary);">ACCESS LOG TRIPWIRE MONITOR</span>
-    </div>
-    <div style="display: flex; gap: 8px;">
-      <a href="server-files.html" class="btn btn-secondary btn-sm">Terminal Shell</a>
-      <a href="admin.html" class="btn btn-primary btn-sm">SOC Console</a>
-    </div>
-  </div>
 
-  <div class="log-stream-card">
-    <div style="display: flex; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid #1e293b; padding-bottom: 12px;">
-      <span style="color: #f87171; font-weight: 700;">📜 /var/log/nginx/access.log (tail -f stream)</span>
-      <span style="color: #64748b; font-size: 0.75rem;">LIVE TAIL ACTIVE</span>
+  <!-- ═══ Top Navigation ═══ -->
+  <nav class="corp-nav">
+    <a href="index.html" class="corp-nav-brand">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.25C17.25 22.15 21 17.25 21 12V7L12 2z" fill="rgba(255,255,255,0.15)" stroke="#fff" stroke-width="1.5"/>
+        <path d="M9 12l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      HONEYPOT
+    </a>
+    <div class="corp-nav-links">
+      <a href="server-files.html">File System</a>
+      <a href="admin.html" class="primary-link">SOC Console</a>
+    </div>
+  </nav>
+
+  <!-- ═══ Page Content ═══ -->
+  <main class="page-wrapper">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="server-files.html">/var/log</a>
+      <span class="breadcrumb-sep">›</span>
+      <a href="#">nginx</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>access.log</span>
+    </nav>
+
+    <!-- Status + badge row -->
+    <div class="status-row">
+      <span class="status-dot" title="Log Stream Active"></span>
+      <span class="status-label">Access Log Stream Active</span>
+      <span class="badge badge-high" style="margin-left:4px;">LOG TRIPWIRE</span>
+      <span class="badge badge-medium" style="margin-left:4px;">HONEYPOT DECOY</span>
     </div>
 
-    <div><span style="color: #38bdf8;">192.168.1.10</span> - - [10/Nov/2026:14:15:02] "POST /login HTTP/1.1" 200 <span style="color: #34d399;">auth_success</span></div>
-    <div><span style="color: #38bdf8;">192.168.1.11</span> - - [10/Nov/2026:14:16:18] "POST /login HTTP/1.1" 401 <span style="color: #f59e0b;">invalid_credentials</span></div>
-    <div><span style="color: #ef4444; font-weight: 700;">198.51.100.88</span> - - [10/Nov/2026:14:18:22] "POST /login HTTP/1.1" 302 <span style="color: #ef4444;">SQL_INJECTION_DETECTED (' OR 1=1)</span></div>
-    <div><span style="color: #ef4444; font-weight: 700;">198.51.100.88</span> - - [10/Nov/2026:14:18:40] "GET /fake-db.html HTTP/1.1" 200 <span style="color: #ef4444;">TRAP_SERVED</span></div>
-    <div><span style="color: #38bdf8;">192.168.1.13</span> - - [10/Nov/2026:14:19:05] "POST /login HTTP/1.1" 302 <span style="color: #f97316;">XSS_ATTACK_INTERCEPTED (&lt;script&gt;)</span></div>
-    <div><span style="color: #8b5cf6;">198.51.100.12</span> - - [10/Nov/2026:14:20:11] "GET /config.html HTTP/1.1" 200 <span style="color: #8b5cf6;">HONEYTOKEN_ACCESSED</span></div>
+    <!-- Main card -->
+    <div class="log-card">
 
-    <div style="margin-top: 18px; color: #64748b;">
-      root@prod-gateway-01:/var/log# tail -f access.log<span style="display: inline-block; width: 8px; height: 14px; background: #22c55e; margin-left: 4px; vertical-align: middle;"></span>
+      <!-- Card header -->
+      <div class="log-card-header">
+        <span class="log-title">📋 /var/log/nginx/access.log</span>
+        <div class="log-meta">
+          <div class="live-pill">
+            <span class="live-pill-dot"></span>
+            Live Tail
+          </div>
+          <span>tail -f stream</span>
+        </div>
+      </div>
+
+      <!-- Card body -->
+      <div class="log-body">
+
+        <!-- Summary strip -->
+        <div class="summary-strip">
+          <div class="sum-box">
+            <div class="sum-box-value">6</div>
+            <div class="sum-box-label">Total Entries</div>
+          </div>
+          <div class="sum-box critical">
+            <div class="sum-box-value">2</div>
+            <div class="sum-box-label">Attack Events</div>
+          </div>
+          <div class="sum-box warning">
+            <div class="sum-box-value">1</div>
+            <div class="sum-box-label">Warnings</div>
+          </div>
+          <div class="sum-box">
+            <div class="sum-box-value">3</div>
+            <div class="sum-box-label">Normal Requests</div>
+          </div>
+        </div>
+
+        <!-- Log stream -->
+        <div class="log-stream-label">Recent Log Entries</div>
+        <div class="log-stream">
+
+          <div class="log-line">
+            <span class="log-ip">192.168.1.10</span>
+            <span class="log-ts">[10/Nov/2026:14:15:02]</span>
+            <span class="log-method">"POST /login HTTP/1.1"</span>
+            <span class="log-status">200</span>
+            <span class="log-event ok">auth_success</span>
+          </div>
+
+          <div class="log-line">
+            <span class="log-ip warn">192.168.1.11</span>
+            <span class="log-ts">[10/Nov/2026:14:16:18]</span>
+            <span class="log-method">"POST /login HTTP/1.1"</span>
+            <span class="log-status">401</span>
+            <span class="log-event warn">invalid_credentials</span>
+          </div>
+
+          <div class="log-line">
+            <span class="log-ip threat">198.51.100.88</span>
+            <span class="log-ts">[10/Nov/2026:14:18:22]</span>
+            <span class="log-method">"POST /login HTTP/1.1"</span>
+            <span class="log-status">302</span>
+            <span class="log-event critical">SQL_INJECTION_DETECTED (' OR 1=1)</span>
+          </div>
+
+          <div class="log-line">
+            <span class="log-ip threat">198.51.100.88</span>
+            <span class="log-ts">[10/Nov/2026:14:18:40]</span>
+            <span class="log-method">"GET /fake-db.html HTTP/1.1"</span>
+            <span class="log-status">200</span>
+            <span class="log-event critical">TRAP_SERVED</span>
+          </div>
+
+          <div class="log-line">
+            <span class="log-ip warn">192.168.1.13</span>
+            <span class="log-ts">[10/Nov/2026:14:19:05]</span>
+            <span class="log-method">"POST /login HTTP/1.1"</span>
+            <span class="log-status">302</span>
+            <span class="log-event warn">XSS_ATTACK_INTERCEPTED (&lt;script&gt;)</span>
+          </div>
+
+          <div class="log-line">
+            <span class="log-ip info" style="color:var(--mid-blue);font-weight:600;">198.51.100.12</span>
+            <span class="log-ts">[10/Nov/2026:14:20:11]</span>
+            <span class="log-method">"GET /config.html HTTP/1.1"</span>
+            <span class="log-status">200</span>
+            <span class="log-event info">HONEYTOKEN_ACCESSED</span>
+          </div>
+
+          <div style="margin-top: 10px; color: #6b7280;">
+            root@prod-gateway-01:/var/log/nginx# tail -f access.log<span class="cursor"></span>
+          </div>
+
+        </div>
+
+        <!-- Info notice -->
+        <div class="info-alert">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span>This is a <strong>deception honeypot decoy</strong>. This log file is a tripwire lure. All access events shown are illustrative. Any access attempt has been logged and is being monitored by the SOC platform.</span>
+        </div>
+
+      </div>
     </div>
-  </div>
+
+  </main>
+
+  <!-- ═══ Footer ═══ -->
+  <footer class="page-footer">
+    Honeypot Security System &mdash; Deception Honeypot Platform &mdash; All interactions monitored and logged.
+  </footer>
+
 </body>
 </html>

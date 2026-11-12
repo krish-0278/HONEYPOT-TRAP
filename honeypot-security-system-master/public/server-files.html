@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>root@prod-gateway-01:/var/www/html | Root Shell Honeypot</title>
+  <title>root@prod-gateway-01:/var/www/html | Interactive Root Shell Decoy</title>
   <meta name="description" content="Root Bash Terminal Emulation. Deception Honeypot Environment.">
 
-  <!-- Core Cyber CSS -->
+  <!-- Core Enterprise CSS -->
   <link rel="stylesheet" href="css/cyber-core.css">
 
   <style>
     body {
-      background: #020617;
-      color: #22c55e;
-      font-family: var(--font-mono);
-      padding: 30px 20px;
+      background-color: var(--bg-page);
+      color: var(--text-body);
+      font-family: var(--font-sans);
+      padding: 32px 20px;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -24,58 +23,52 @@
 
     .terminal-window {
       width: min(920px, 100%);
-      background: #000000;
-      border: 1px solid #1e293b;
-      border-radius: 12px;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 25px rgba(34, 197, 94, 0.15);
+      background: #171E23;
+      border: 1px solid var(--border-grey);
+      border-radius: 8px;
+      box-shadow: var(--shadow-lg);
       overflow: hidden;
       margin-bottom: 24px;
     }
 
     .terminal-titlebar {
-      background: #0f172a;
+      background: #222C32;
       padding: 10px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid #1e293b;
+      border-bottom: 1px solid var(--border-grey);
       user-select: none;
     }
 
     .terminal-buttons {
       display: flex;
-      gap: 8px;
+      gap: 6px;
     }
-
     .term-btn {
       width: 12px;
       height: 12px;
       border-radius: 50%;
     }
-
-    .term-close {
-      background: #ef4444;
-    }
-
-    .term-min {
-      background: #f59e0b;
-    }
-
-    .term-max {
-      background: #10b981;
-    }
+    .term-close { background: #C77B78; }
+    .term-min { background: #BBA47A; }
+    .term-max { background: #739F98; }
 
     .terminal-title {
-      font-size: 0.8rem;
-      color: #94a3b8;
+      font-size: 0.8125rem;
+      color: #E9ECEF;
+      font-family: var(--font-mono);
     }
 
     .terminal-body {
       padding: 24px;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
+      font-family: var(--font-mono);
       line-height: 1.6;
-      max-height: 600px;
+      max-height: 560px;
       overflow-y: auto;
+      color: #E9ECEF;
+      background: #171E23;
     }
 
     .term-line {
@@ -85,7 +78,7 @@
     }
 
     .term-prompt {
-      color: #38bdf8;
+      color: var(--primary-accent);
       font-weight: 600;
     }
 
@@ -97,46 +90,41 @@
 
     .term-input {
       background: transparent;
-      border: none;
-      outline: none;
-      color: #22c55e;
+      border: none !important;
+      outline: none !important;
+      color: #E9ECEF !important;
       font-family: var(--font-mono);
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       flex: 1;
       padding-left: 8px;
+      box-shadow: none !important;
     }
 
     .term-cursor {
       display: inline-block;
       width: 8px;
       height: 16px;
-      background: #22c55e;
+      background: var(--champagne-gold);
       animation: termBlink 1s infinite;
       vertical-align: middle;
       margin-left: 2px;
     }
 
     @keyframes termBlink {
-      50% {
-        opacity: 0;
-      }
+      50% { opacity: 0; }
     }
   </style>
 </head>
 
 <body>
-  <div class="cyber-grid-overlay"></div>
-  <div class="scanlines-overlay"></div>
-
-  <div
-    style="width: min(920px, 100%); display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-    <div style="display: flex; align-items: center; gap: 10px;">
-      <span class="pulse-dot"></span>
-      <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--cyan-primary);">
-        SSH TRAP ACTIVE // SHELL EMULATION CONTAINMENT
+  <div style="width: min(920px, 100%); display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span class="status-indicator"></span>
+      <span style="font-size: 0.8125rem; font-weight: 600; color: var(--champagne-gold);">
+        SSH SHELL EMULATION CONTAINMENT TRAP
       </span>
     </div>
-    <div style="display: flex; gap: 10px;">
+    <div style="display: flex; gap: 8px;">
       <a href="fake-db.html" class="btn btn-secondary btn-sm">&larr; Database Decoy</a>
       <a href="admin.html" class="btn btn-primary btn-sm">SOC Console</a>
     </div>
@@ -150,18 +138,13 @@
         <span class="term-btn term-max"></span>
       </div>
       <div class="terminal-title">root@prod-gateway-01: /var/www/html (bash)</div>
-      <div style="font-size: 0.75rem; color: #64748b;">SSH-2.0-OpenSSH_9.6p1</div>
+      <div style="font-size: 0.75rem; color: #9CA3AF; font-family: var(--font-mono);">OpenSSH_9.6p1</div>
     </div>
 
     <div class="terminal-body" id="termBody">
-      <div class="term-line" style="color: #94a3b8;">Linux prod-gateway-01 6.8.0-31-generic #31-Ubuntu SMP
-        PREEMPT_DYNAMIC x86_64 GNU/Linux</div>
-      <div class="term-line" style="color: #94a3b8;">Authorized use only. All activities are monitored and reported to
-        security operations.</div>
-      <div class="term-line" style="color: #facc15; margin: 6px 0;">[SYSTEM] 1 failed login attempt since last
-        authorization. Session elevated to root.</div>
-      <div class="term-line" style="color: #94a3b8; margin-bottom: 12px;">Type 'help' to inspect available system
-        commands.</div>
+      <div class="term-line" style="color: #9CA3AF;">Linux prod-gateway-01 6.8.0-31-generic #31-Ubuntu SMP x86_64</div>
+      <div class="term-line" style="color: #9CA3AF;">Authorized personnel only. All terminal actions are logged to security operations.</div>
+      <div class="term-line" style="color: #FCD34D; margin: 6px 0;">[SYSTEM NOTICE] Session elevated to root shell. Type 'help' for commands.</div>
 
       <div id="termHistory"></div>
 
@@ -173,8 +156,8 @@
     </div>
   </div>
 
-  <div style="font-family: var(--font-mono); font-size: 0.75rem; color: #64748b; text-align: center;">
-    HONEYPOT INTERACTIVE SHELL EMULATOR v2.4 // CAPTURING ADVANCED TTPs
+  <div style="font-size: 0.8125rem; color: var(--text-muted); text-align: center;">
+    Honeypot Terminal Shell Decoy v2.4 // Zero Production Impact
   </div>
 
   <script>
@@ -186,7 +169,7 @@
       "/": ["bin", "etc", "home", "var", "root", "tmp"],
       "/var": ["www", "log", "backups"],
       "/var/www": ["html"],
-      "/var/www/html": ["config.php", "backup.zip", "access.log", "index.php"],
+      "/var/www/html": ["config.php", "backup.zip", "access.log"],
       "/var/log": ["access.log", "auth.log", "syslog"]
     };
 
@@ -196,13 +179,10 @@ define('DB_HOST', 'localhost:3306');
 define('DB_USER', 'root');
 define('DB_PASS', 'super_secret_master_password_982!');
 define('DB_NAME', 'internal_production');
-define('API_SECRET_KEY', 'sk_live_honeytoken_7x992384ba201');
 ?>`,
-      "backup.zip": `PK\x03\x04\x14\x00\x00\x00\x08\x00... [Encrypted ZIP archive: users.sql, passwords.txt, shadow.bak]`,
-      "access.log": `192.168.1.10 - - [10/Nov/2026:14:22:01] "GET /login HTTP/1.1" 200
-198.51.100.88 - - [10/Nov/2026:14:23:45] "POST /login HTTP/1.1" 302 SQL_INJECTION_FLAGGED
-198.51.100.88 - - [10/Nov/2026:14:24:10] "GET /fake-db.html HTTP/1.1" 200`,
-      "index.php": `<?php header('Location: /login.html'); ?>`
+      "backup.zip": `[Encrypted ZIP archive: users.sql, passwords.txt]`,
+      "access.log": `192.168.1.10 - [10/Nov/2026:14:22:01] "GET /login HTTP/1.1" 200
+198.51.100.88 - [10/Nov/2026:14:23:45] "POST /login HTTP/1.1" 302 SQL_INJECTION_FLAGGED`
     };
 
     const input = document.getElementById("termInput");
@@ -214,13 +194,12 @@ define('API_SECRET_KEY', 'sk_live_honeytoken_7x992384ba201');
       promptSpan.innerText = `root@prod-gateway-01:${currentPath}# `;
     }
 
-    input.addEventListener("keydown", function (e) {
+    input.addEventListener("keydown", function(e) {
       if (e.key === "Enter") {
         const cmd = this.value.trim();
         if (cmd) cmdHistory.push(cmd);
         historyIdx = cmdHistory.length;
 
-        // Print command executed
         historyContainer.innerHTML += `<div class="term-line"><span class="term-prompt">${promptSpan.innerText}</span>${cmd}</div>`;
 
         let output = "";
@@ -230,21 +209,15 @@ define('API_SECRET_KEY', 'sk_live_honeytoken_7x992384ba201');
   ls [-la]      List directory contents
   pwd           Print working directory
   cd <dir>      Change working directory
-  cat <file>    Concatenate and display file content
+  cat <file>    Display file content
   whoami        Display current effective user
   id            Print user and group IDs
-  uname -a      Print system hardware and kernel info
-  ps aux        Snapshot of current processes
-  netstat -tuln Active Internet connections and listening ports
+  uname -a      Print system info
   clear         Clear the terminal screen
   exit          Close session`;
         } else if (cmd === "ls" || cmd === "ls -l" || cmd === "ls -la") {
           const files = fileSystem[currentPath] || [];
-          if (cmd.includes("-l")) {
-            output = files.map(f => `-rw-r--r-- 1 root root  4096 Nov 10 14:00 ${f}`).join("\n");
-          } else {
-            output = files.join("    ");
-          }
+          output = files.join("    ");
         } else if (cmd === "pwd") {
           output = currentPath;
         } else if (cmd === "whoami") {
@@ -252,19 +225,7 @@ define('API_SECRET_KEY', 'sk_live_honeytoken_7x992384ba201');
         } else if (cmd === "id") {
           output = "uid=0(root) gid=0(root) groups=0(root)";
         } else if (cmd === "uname -a") {
-          output = "Linux prod-gateway-01 6.8.0-31-generic #31-Ubuntu SMP PREEMPT_DYNAMIC x86_64 GNU/Linux";
-        } else if (cmd === "ps aux") {
-          output = `USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root         1  0.0  0.1 168340 12820 ?        Ss   12:00   0:01 /sbin/init
-root       412  0.1  0.3  84210 24890 ?        Ss   12:01   0:04 /usr/sbin/apache2 -k start
-mysql      509  0.2  1.2 920400 98200 ?        Ssl  12:01   0:15 /usr/sbin/mysqld
-root      1204  0.0  0.1  14200  3890 pts/0    Ss+  14:20   0:00 bash -i`;
-        } else if (cmd === "netstat -tuln") {
-          output = `Proto Recv-Q Send-Q Local Address           Foreign Address         State
-tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN
-tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN
-tcp        0      0 0.0.0.0:3000            0.0.0.0:*               LISTEN
-tcp        0      0 127.0.0.1:3306          0.0.0.0:*               LISTEN`;
+          output = "Linux prod-gateway-01 6.8.0-31-generic x86_64 GNU/Linux";
         } else if (cmd.startsWith("cat ")) {
           const target = cmd.split(" ")[1];
           output = fileContents[target] || `cat: ${target}: No such file or directory`;
@@ -276,48 +237,29 @@ tcp        0      0 127.0.0.1:3306          0.0.0.0:*               LISTEN`;
             currentPath = "/";
           } else {
             const next = currentPath === "/" ? "/" + target : currentPath + "/" + target;
-            if (fileSystem[next]) {
-              currentPath = next;
-            } else {
-              output = `bash: cd: ${target}: No such file or directory`;
-            }
+            if (fileSystem[next]) currentPath = next;
+            else output = `bash: cd: ${target}: No such file or directory`;
           }
           updatePrompt();
         } else if (cmd === "clear") {
           historyContainer.innerHTML = "";
         } else if (cmd === "exit") {
           output = "Logout successful. Connection to host closed.";
-          setTimeout(() => { window.location.href = "admin.html"; }, 1500);
+          setTimeout(() => { window.location.href = "admin.html"; }, 1000);
         } else {
           output = `bash: ${cmd}: command not found`;
         }
 
         if (output) {
-          historyContainer.innerHTML += `<div class="term-line" style="color: #94a3b8;">${output}</div>`;
+          historyContainer.innerHTML += `<div class="term-line" style="color: #9CA3AF;">${output}</div>`;
         }
 
         this.value = "";
         termBody.scrollTop = termBody.scrollHeight;
-      } else if (e.key === "ArrowUp") {
-        if (historyIdx > 0) {
-          historyIdx--;
-          this.value = cmdHistory[historyIdx] || "";
-        }
-      } else if (e.key === "ArrowDown") {
-        if (historyIdx < cmdHistory.length - 1) {
-          historyIdx++;
-          this.value = cmdHistory[historyIdx] || "";
-        } else {
-          historyIdx = cmdHistory.length;
-          this.value = "";
-        }
       }
     });
 
-    document.addEventListener("click", () => {
-      input.focus();
-    });
+    document.addEventListener("click", () => { input.focus(); });
   </script>
 </body>
-
 </html>

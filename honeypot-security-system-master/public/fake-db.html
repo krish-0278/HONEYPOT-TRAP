@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Corporate Database Console | phpMyAdmin / Internal SQL Vault</title>
+  <title>Corporate Database Console | phpMyAdmin Internal SQL Vault</title>
   <meta name="description" content="Internal Database Query Console. Deception Honeypot Trap.">
 
-  <!-- Core Cyber CSS -->
+  <!-- Core Enterprise CSS -->
   <link rel="stylesheet" href="css/cyber-core.css">
 
   <style>
     body {
-      padding: 30px 24px;
+      background-color: var(--bg-page);
+      color: var(--text-body);
+      padding: 32px 24px;
       min-height: 100vh;
-      background-color: var(--bg-primary);
     }
 
     .db-container {
@@ -21,88 +23,75 @@
       margin: 0 auto;
     }
 
-    .db-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-
     .sql-query-box {
-      background: #000;
-      border: 1px solid var(--border-medium);
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-grey);
+      border-left: 4px solid var(--error-red);
       padding: 16px 20px;
-      border-radius: 10px;
+      border-radius: 6px;
       font-family: var(--font-mono);
-      font-size: 0.85rem;
-      color: #38bdf8;
+      font-size: 0.875rem;
+      color: var(--champagne-gold);
       margin-bottom: 24px;
-      box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
-      position: relative;
+      box-shadow: var(--shadow-xs);
     }
-    .sql-keyword { color: #f43f5e; font-weight: 700; }
-    .sql-table { color: #34d399; }
-    .sql-string { color: #fbbf24; }
   </style>
 </head>
 
 <body>
-  <div class="cyber-grid-overlay"></div>
-  <div class="scanlines-overlay"></div>
-
   <div class="db-container">
-    <div class="db-header">
-      <div style="display: flex; align-items: center; gap: 14px;">
-        <div class="brand-icon-wrapper" style="width: 40px; height: 40px;">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <ellipse cx="12" cy="5" rx="9" ry="3"/>
-            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
-            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+    <div
+      style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div class="corp-logo-icon"
+          style="background-color: var(--bg-elevated); color: var(--champagne-gold); border: 1px solid var(--border-grey);">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <ellipse cx="12" cy="5" rx="9" ry="3" />
+            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" />
+            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" />
           </svg>
         </div>
         <div>
-          <h1 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--text-primary);">
-            Production Database Terminal (phpMyAdmin Core)
-          </h1>
-          <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--alert-critical);">
-            ⚠️ EXPLOIT DETECTED // SQL INJECTION QUERY INTERCEPTED & CONTAINED
+          <h1 style="font-size: 1.4rem; color: var(--text-heading);">Production Database Query Console</h1>
+          <div style="font-size: 0.8125rem; color: var(--error-red); font-weight: 600;">
+            ⚠️ INTRUSION DETECTED // SQL INJECTION QUERY INTERCEPTED BY HONEYPOT GRID
           </div>
         </div>
       </div>
 
-      <div style="display: flex; gap: 10px;">
-        <a href="server-files.html" class="btn btn-secondary btn-sm">
-          <span>Explore Server Files &rarr;</span>
-        </a>
-        <a href="admin.html" class="btn btn-primary btn-sm">
-          <span>Return to SOC Console</span>
-        </a>
+      <div style="display: flex; gap: 8px;">
+        <a href="server-files.html" class="btn btn-secondary btn-sm">Explore Server Files &rarr;</a>
+        <a href="admin.html" class="btn btn-primary btn-sm">Return to SOC Console</a>
       </div>
     </div>
 
     <!-- SQL Query Executed -->
     <div class="sql-query-box">
-      <div style="position: absolute; right: 14px; top: 12px; font-size: 0.7rem; color: var(--text-muted);">
-        AFFECTED ROWS: 10 // EXECUTION: 1.4ms
+      <div
+        style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 600;">
+        INTERCEPTED QUERY DUMP // STATUS: 200 OK
       </div>
       <div>
-        <span class="sql-keyword">SELECT</span> * <span class="sql-keyword">FROM</span> <span class="sql-table">`users`</span> <span class="sql-keyword">WHERE</span> `username` = <span class="sql-string">'admin'</span> <span class="sql-keyword">OR</span> <span class="sql-string">1=1</span> -- <span class="sql-keyword">LIMIT</span> 10;
+        <strong style="color: var(--primary-accent);">SELECT</strong> * <strong
+          style="color: var(--primary-accent);">FROM</strong> `users` <strong
+          style="color: var(--primary-accent);">WHERE</strong> `username` = <span
+          style="color: var(--error-red);">'admin'</span> <strong style="color: var(--primary-accent);">OR</strong>
+        <span style="color: var(--error-red);">1=1</span> -- <strong
+          style="color: var(--primary-accent);">LIMIT</strong> 10;
       </div>
     </div>
 
-    <!-- Dump Table -->
-    <div class="glass-panel" style="padding: 24px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
-        <div style="font-size: 0.9rem; font-weight: 700; color: var(--cyan-primary);">
-          TABLE: internal_production.users
+    <!-- Table of fake users -->
+    <div class="enterprise-card" style="padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div style="font-size: 0.95rem; font-weight: 700; color: var(--text-heading);">
+          TABLE: internal_production.users (10 Rows Returned)
         </div>
-        <span class="badge badge-critical">DUMP IN PROGRESS</span>
+        <span class="badge badge-critical">SYNTHETIC DECOY DATA</span>
       </div>
 
-      <div class="cyber-table-container">
-        <table class="cyber-table">
+      <div class="enterprise-table-container">
+        <table class="enterprise-table">
           <thead>
             <tr>
               <th>ID</th>
@@ -121,8 +110,8 @@
               <td>Administrator</td>
               <td>admin@company.com</td>
               <td><span class="badge badge-critical">SUPER_ADMIN</span></td>
-              <td class="code-cell" style="color: #f87171;">admin123</td>
-              <td class="code-cell" style="font-size: 0.7rem;">5f4dcc3b5aa765d61d8327deb882cf99</td>
+              <td class="code-cell" style="color: var(--error-red); font-weight: 700;">admin123</td>
+              <td class="code-cell" style="font-size: 0.75rem;">5f4dcc3b5aa765d61d8327deb882cf99</td>
               <td>$12,000</td>
               <td><span class="badge badge-low">ACTIVE</span></td>
             </tr>
@@ -131,8 +120,8 @@
               <td>Standard User</td>
               <td>user@company.com</td>
               <td><span class="badge badge-info">EMPLOYEE</span></td>
-              <td class="code-cell" style="color: #f87171;">user123</td>
-              <td class="code-cell" style="font-size: 0.7rem;">ee11cbb19052e40b07aac0ca060c23ee</td>
+              <td class="code-cell" style="color: var(--error-red); font-weight: 700;">user123</td>
+              <td class="code-cell" style="font-size: 0.75rem;">ee11cbb19052e40b07aac0ca060c23ee</td>
               <td>$4,000</td>
               <td><span class="badge badge-low">ACTIVE</span></td>
             </tr>
@@ -141,8 +130,8 @@
               <td>John Doe</td>
               <td>john@gmail.com</td>
               <td><span class="badge badge-info">MANAGER</span></td>
-              <td class="code-cell" style="color: #f87171;">john@123</td>
-              <td class="code-cell" style="font-size: 0.7rem;">a87ff679a2f3e71d9181a67b7542122c</td>
+              <td class="code-cell" style="color: var(--error-red); font-weight: 700;">john@123</td>
+              <td class="code-cell" style="font-size: 0.75rem;">a87ff679a2f3e71d9181a67b7542122c</td>
               <td>$8,000</td>
               <td><span class="badge badge-low">ACTIVE</span></td>
             </tr>
@@ -151,8 +140,8 @@
               <td>Alice Smith</td>
               <td>alice@yahoo.com</td>
               <td><span class="badge badge-info">HR_LEAD</span></td>
-              <td class="code-cell" style="color: #f87171;">alice@456</td>
-              <td class="code-cell" style="font-size: 0.7rem;">e4da3b7fbbce2345d7772b0674a318d5</td>
+              <td class="code-cell" style="color: var(--error-red); font-weight: 700;">alice@456</td>
+              <td class="code-cell" style="font-size: 0.75rem;">e4da3b7fbbce2345d7772b0674a318d5</td>
               <td>$6,500</td>
               <td><span class="badge badge-low">ACTIVE</span></td>
             </tr>
@@ -161,71 +150,16 @@
               <td>Rahul Sharma</td>
               <td>rahul@company.com</td>
               <td><span class="badge badge-info">DEVELOPER</span></td>
-              <td class="code-cell" style="color: #f87171;">rahul@789</td>
-              <td class="code-cell" style="font-size: 0.7rem;">1679091c5a880faf6fb5e6087eb1b2dc</td>
+              <td class="code-cell" style="color: var(--error-red); font-weight: 700;">rahul@789</td>
+              <td class="code-cell" style="font-size: 0.75rem;">1679091c5a880faf6fb5e6087eb1b2dc</td>
               <td>$7,000</td>
-              <td><span class="badge badge-low">ACTIVE</span></td>
-            </tr>
-            <tr>
-              <td class="code-cell">6</td>
-              <td>Sneha Roy</td>
-              <td>sneha@gmail.com</td>
-              <td><span class="badge badge-info">DESIGNER</span></td>
-              <td class="code-cell" style="color: #f87171;">sneha@111</td>
-              <td class="code-cell" style="font-size: 0.7rem;">8f14e45fceea167a5a36dedd4bea2543</td>
-              <td>$6,000</td>
-              <td><span class="badge badge-low">ACTIVE</span></td>
-            </tr>
-            <tr>
-              <td class="code-cell">7</td>
-              <td>David Brown</td>
-              <td>david@mail.com</td>
-              <td><span class="badge badge-medium">INTERN</span></td>
-              <td class="code-cell" style="color: #f87171;">david@222</td>
-              <td class="code-cell" style="font-size: 0.7rem;">c9f0f895fb98ab9159f51fd0297e236d</td>
-              <td>$2,000</td>
-              <td><span class="badge" style="background: rgba(100, 116, 139, 0.2); color: #94a3b8;">INACTIVE</span></td>
-            </tr>
-            <tr>
-              <td class="code-cell">8</td>
-              <td>Priya Patel</td>
-              <td>priya@mail.com</td>
-              <td><span class="badge badge-info">QA_ENGINEER</span></td>
-              <td class="code-cell" style="color: #f87171;">priya@333</td>
-              <td class="code-cell" style="font-size: 0.7rem;">45c48cce2e2d7fbdea1afc51c7c6ad26</td>
-              <td>$5,000</td>
-              <td><span class="badge badge-low">ACTIVE</span></td>
-            </tr>
-            <tr>
-              <td class="code-cell">9</td>
-              <td>Arjun Nair</td>
-              <td>arjun@mail.com</td>
-              <td><span class="badge badge-info">SYS_ADMIN</span></td>
-              <td class="code-cell" style="color: #f87171;">arjun@444</td>
-              <td class="code-cell" style="font-size: 0.7rem;">d3d9446802a44259755d38e6d163e820</td>
-              <td>$4,500</td>
-              <td><span class="badge badge-low">ACTIVE</span></td>
-            </tr>
-            <tr>
-              <td class="code-cell">10</td>
-              <td>Meena Iyer</td>
-              <td>meena@mail.com</td>
-              <td><span class="badge badge-info">FINANCE</span></td>
-              <td class="code-cell" style="color: #f87171;">meena@555</td>
-              <td class="code-cell" style="font-size: 0.7rem;">6512bd43d9caa6e02c990b0a82652dca</td>
-              <td>$7,500</td>
               <td><span class="badge badge-low">ACTIVE</span></td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
-
-    <div style="margin-top: 24px; text-align: center;">
-      <a href="server-files.html" class="btn btn-secondary">
-        <span>Proceed to Server Filesystem Honeypot &rarr;</span>
-      </a>
-    </div>
   </div>
 </body>
+
 </html>
